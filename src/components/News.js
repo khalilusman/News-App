@@ -92,45 +92,34 @@ export default class News extends Component {
     }
   }
   
-
-  async componentDidMount(){
-    this.setState({ loading: true }); 
-
-
-    let url = "https://newsapi.org/v2/top-headlines?country=us&apiKey=df033abef29c46a3a916e666817f5288&page=1"
-    let data = await fetch(url)
-    let parseData = await data.json()
-    this.setState({articles: parseData.articles, loading:false})
-
+  
+  fetchArticles = async (page) => {
+    this.setState({ loading: true });
+    let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=df033abef29c46a3a916e666817f5288&page=${page}&pageSize=15`;
+    let data = await fetch(url);
+    let parseData = await data.json();
+    this.setState({ articles: parseData.articles, loading: false, totalResults: parseData.totalResults, page });
   }
-
-  previousbtn = async () =>{
-    console.log("clicked")
-    this.setState({ loading: true }); 
-
-
-    let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=df033abef29c46a3a916e666817f5288&page=${this.state.page - 1}`
-    let data = await fetch(url)
-    let parseData = await data.json()
-    this.setState({articles: parseData.articles, loading:false, page: this.state.page - 1 })
-
+  
+  componentDidMount() {
+    this.fetchArticles(1);
   }
-  nextbtn = async () =>{
-    console.log("clicked")
-    this.setState({ loading: true }); 
-
-
-    let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=df033abef29c46a3a916e666817f5288&page=${this.state.page + 1}`
-    let data = await fetch(url)
-    let parseData = await data.json()
-    this.setState({articles: parseData.articles, loading:false, page: this.state.page + 1 })
-
+  
+  previousbtn = () => {
+    this.fetchArticles(this.state.page - 1);
   }
+  
+  nextbtn = () => {
+    if (this.state.page + 1 <= Math.ceil(this.state.totalResults / 15)) {
+      this.fetchArticles(this.state.page + 1);
+    }
+  }
+  
   render() {
     return (
       <div>
-        <div className="conatiner my-3">
-        <h4>Get you daily updated news here</h4>
+        <div className="container my-4 d-flex justify-content-center">
+        <h2>Get you daily updated news here</h2>
         </div>
         <div className="container my-3">
           
@@ -142,7 +131,7 @@ export default class News extends Component {
           </div>
         )}
           <div className="row">
-          {this.state.articles.map((element, index) => {
+          {this.state.articles && this.state.articles.map((element,index) => {
             return (
               <div className="col-md-4 my-3" key={index}>
                 <NewsItem
@@ -151,7 +140,7 @@ export default class News extends Component {
                       ? element.title.slice(0, 35)
                       : element.title
                   }
-                  image={element.urlToImage}
+                  image={element.urlToImage ? element.urlToImage : "https://via.placeholder.com/150"}
                   description={
                     element.description && element.description.length >= 80
                       ? element.description.slice(0, 80)
