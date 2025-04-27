@@ -12,6 +12,7 @@ export default function NewsItem(props) {
             <a href={props.href} target='blank' className="btn btn-sm btn-dark">Read More</a>
           </div>
         </div>
+  
 
     </div>
   )
