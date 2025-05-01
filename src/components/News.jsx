@@ -12,7 +12,7 @@ export default class News extends Component {
 
   }
 
-  static PropsTypes = {
+  static PropTypes = {
     country: PropTypes.string,
     pageSize: PropTypes.number,
     category: PropTypes.string,
@@ -126,7 +126,7 @@ export default class News extends Component {
   }
   
   nextbtn = () => {
-    if (this.state.page + 1 <= Math.ceil(this.state.totalResults / 15)) {
+    if (this.state.page + 1 <= Math.ceil(this.state.totalResults / this.props.pageSize)) {
       this.fetchArticles(this.state.page + 1);
     }
   }
@@ -147,9 +147,9 @@ export default class News extends Component {
           </div>
         )}
           <div className="row">
-          {this.state.articles && this.state.articles.map((element,index) => {
+          {this.state.articles && this.state.articles.map((element) => {
             return (
-              <div className="col-md-4 my-3" key={index}>
+              <div className="col-md-4 my-3" key={element.url}>
                 <NewsItem
                   title={
                     element.title && element.title.length >= 35
